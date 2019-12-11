@@ -29,8 +29,16 @@ do
 			loss=$(($loss+1))
 		fi
 	done
+
 	cash=$(($stake-100))
-	gamblerDict["DAY$i"]="$cash "
+	if [ $cash -gt 0 ]
+	then
+		result="Win"
+	else
+		result="Loss"
+	fi
+
+	gamblerDict["DAY$i"]="$result		$cash "
 
 	totalEarn=$(($totalEarn+$cash))
 done
