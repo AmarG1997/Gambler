@@ -2,64 +2,69 @@
 echo "Welcome to the gambler"
 
 BETS=1
-DAY=21
+DAY=20
 
-totalWin=0
-totalLoss=0
+totalEarn=0
+
 declare -A gamblerDict
 
 function gamblingForDay()
 {
-local cashResult=0
-for (( i=1; i<DAY ;i++ ))
-do
-	stake=100
-	maxLimit=$(($stake+(50*$stake/100)))
-	minLimit=$(($stake-(50*$stake/100)))
-	win=0
-	loss=0
-	while [[ $stake -lt $maxLimit && $stake -gt $minLimit ]]
+		local cashResult=0
+
+
+		stake=100
+		maxLimit=$(($stake+(50*$stake/100)))
+		minLimit=$(($stake-(50*$stake/100)))
+		win=0
+		loss=0
+		while [[ $stake -lt $maxLimit && $stake -gt $minLimit ]]
+		do
+				gamblerResult=$((RANDOM%2))
+				if [ $gamblerResult -eq 0 ]
+				then
+					stake=$(($stake+1))
+					win=$(($win+1))
+				else
+					stake=$(($stake-1))
+					loss=$(($loss+1))
+				fi
+		done
+
+		cash=$(($stake-100))
+		cashResult=$(($cash+$cashResult))
+
+		echo "$cash $cashResult"
+}
+
+function main()
+{
+	for (( i=1; i<=$DAY ;i++ ))
 	do
-	gamblerResult=$((RANDOM%2))
-		if [ $gamblerResult -eq 0 ]
-		then
-			stake=$(($stake+1))
-			win=$(($win+1))
-		else
-			stake=$(($stake-1))
-			loss=$(($loss+1))
-		fi
+		read cash cashResult < <( gamblingForDay )
+		totalEarn=$(($totalEarn+$cash))
+		gamblerDict["DAY$i"]="$cashResult $totalEarn"
 	done
 
-	cash=$(($stake-100))
-	if [ $cash -gt 0 ]
-	then
-		result="Win"
-	else
-		result="Loss"
-	fi
 
-	cashResult=$(($cash+$cashResult))
+	for (( p=1; p<=${#gamblerDict[@]}; p++ ))
+	do
+		echo "Day $p ${gamblerDict[DAY$p]}"
+	done
 
-	gamblerDict["DAY$i"]="$result $cash $cashResult"
+	for (( j=1; j<=${#gamblerDict[@]}; j++ ))
+	do
+		echo "Day $j	${gamblerDict[DAY$j]}"
+	done | sort -k4 -nr | awk 'NR==1{print "luckiest day :" ($1$2"        "   $4)}'
 
-	totalEarn=$(($totalEarn+$cash))
-done
+	for (( j=1; j<=${#gamblerDict[@]}; j++ ))
+	do
+		echo "Day $j ${gamblerDict[DAY$j]}"
+	done | sort -k4 -n | awk 'NR==1{print "Unluckiest day :" ($1$2"        "   $4)}'
 
-DAY=$(($DAY+1))
+
 
 }
 
-gamblingForDay
-
-for (( j=1; j<${#gamblerDict[@]}; j++ ))
-do
-	echo "Day $j	${gamblerDict[DAY$j]}"
-done | sort -k5 -nr | awk 'NR==1{print "luckiest day :" ($1$2"        "   $5)}'
-
-for (( j=1; j<${#gamblerDict[@]}; j++ ))
-do
-        echo "Day $j    ${gamblerDict[DAY$j]}"
-done | sort -k5 -n | awk 'NR==1{print "Unluckiest day :" ($1$2"        "   $5)}'
-
-echo "Total Earn : "$totalEarn
+main
+	echo "Total Earn : $totalEarn"
