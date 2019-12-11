@@ -29,10 +29,10 @@ do
 			loss=$(($loss+1))
 		fi
 	done
-	gamblerDict["DAY$i"]="$stake 	 $win  	$loss"
+	cash=$(($stake-100))
+	gamblerDict["DAY$i"]="$cash "
 
-	totalWin=$(($totalWin+$win))
-	totalLoss=$(($totalLoss+$loss))
+	totalEarn=$(($totalEarn+$cash))
 done
 
 DAY=$(($DAY+1))
@@ -46,5 +46,4 @@ do
 	echo "Day $j		${gamblerDict[DAY$j]}"
 done
 
-echo "Total Wins : "$totalWin
-echo "Total Loss : "$totalLoss
+echo "Total Earn : "$totalEarn
