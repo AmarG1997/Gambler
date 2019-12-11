@@ -2,7 +2,7 @@
 echo "Welcome to the gambler"
 
 BETS=1
-DAY=20
+DAY=21
 
 totalWin=0
 totalLoss=0
@@ -10,7 +10,8 @@ declare -A gamblerDict
 
 function gamblingForDay()
 {
-for (( i=0; i<DAY ;i++ ))
+local cashResult=0
+for (( i=1; i<DAY ;i++ ))
 do
 	stake=100
 	maxLimit=$(($stake+(50*$stake/100)))
@@ -38,7 +39,9 @@ do
 		result="Loss"
 	fi
 
-	gamblerDict["DAY$i"]="$result		$cash "
+	cashResult=$(($cash+$cashResult))
+
+	gamblerDict["DAY$i"]="$result $cash $cashResult"
 
 	totalEarn=$(($totalEarn+$cash))
 done
@@ -49,9 +52,14 @@ DAY=$(($DAY+1))
 
 gamblingForDay
 
-for (( j=0; j<${#gamblerDict[@]}; j++ ))
+for (( j=1; j<${#gamblerDict[@]}; j++ ))
 do
-	echo "Day $j		${gamblerDict[DAY$j]}"
-done
+	echo "Day $j	${gamblerDict[DAY$j]}"
+done | sort -k5 -nr | awk 'NR==1{print "luckiest day :" ($1$2"        "   $5)}'
+
+for (( j=1; j<${#gamblerDict[@]}; j++ ))
+do
+        echo "Day $j    ${gamblerDict[DAY$j]}"
+done | sort -k5 -n | awk 'NR==1{print "Unluckiest day :" ($1$2"        "   $5)}'
 
 echo "Total Earn : "$totalEarn
