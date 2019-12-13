@@ -6,12 +6,11 @@ DAY=20
 
 totalEarn=0
 
-declare -A gamblerDict
+declare -A gamblerResultDict
 
 function gamblingForDay()
 {
 		local cashResult=0
-
 
 		stake=100
 		maxLimit=$(($stake+(50*$stake/100)))
@@ -43,35 +42,31 @@ function main()
 	do
 		read cash cashResult < <( gamblingForDay )
 		totalEarn=$(($totalEarn+$cash))
-		gamblerDict["DAY$i"]="$cashResult $totalEarn"
+		gamblerResultDict["DAY$i"]="$cashResult $totalEarn"
 	done
 
-
-	for (( p=1; p<=${#gamblerDict[@]}; p++ ))
+	for (( p=1; p<=${#gamblerResultDict[@]}; p++ ))
 	do
 		echo "Day $p ${gamblerDict[DAY$p]}"
 	done
 
-	for (( j=1; j<=${#gamblerDict[@]}; j++ ))
+	for (( j=1; j<=${#gamblerResultDict[@]}; j++ ))
 	do
-		echo "Day $j	${gamblerDict[DAY$j]}"
+		echo "Day $j	${gamblerResultDict[DAY$j]}"
 	done | sort -k4 -nr | awk 'NR==1{print "luckiest day :" ($1$2"        "   $4)}'
 
-	for (( j=1; j<=${#gamblerDict[@]}; j++ ))
+	for (( j=1; j<=${#gamblerResultDict[@]}; j++ ))
 	do
-		echo "Day $j ${gamblerDict[DAY$j]}"
+		echo "Day $j ${gamblerResultDict[DAY$j]}"
 	done | sort -k4 -n | awk 'NR==1{print "Unluckiest day :" ($1$2"        "   $4)}'
 
-
-
-}
-
-main
 	echo "Total Earn : $totalEarn"
 
 	while [ $totalEarn -gt 0 ]
 	do
 		main
-		echo "Total Earn : "$totalEarn
-
 	done
+
+}
+
+main
