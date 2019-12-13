@@ -4,17 +4,15 @@ echo "Welcome to the gambler"
 BETS=1
 DAY=20
 
+stake=100
 totalEarn=0
-
+maxLimit=$(( $stake+ $(( 50*$stake/100 )) ))
+minLimit=$(( $stake- $(( 50*$stake/100 )) ))
 declare -A gamblerResultDict
 
 function gamblingForDay()
 {
 		local cashResult=0
-
-		stake=100
-		maxLimit=$(($stake+(50*$stake/100)))
-		minLimit=$(($stake-(50*$stake/100)))
 		win=0
 		loss=0
 		while [[ $stake -lt $maxLimit && $stake -gt $minLimit ]]
@@ -36,7 +34,7 @@ function gamblingForDay()
 		echo "$cash $cashResult"
 }
 
-function main()
+function display()
 {
 	for (( i=1; i<=$DAY ;i++ ))
 	do
@@ -47,7 +45,7 @@ function main()
 
 	for (( p=1; p<=${#gamblerResultDict[@]}; p++ ))
 	do
-		echo "Day $p ${gamblerDict[DAY$p]}"
+		echo "Day $p ${gamblerResultDict[DAY$p]}"
 	done
 
 	for (( j=1; j<=${#gamblerResultDict[@]}; j++ ))
@@ -58,15 +56,14 @@ function main()
 	for (( j=1; j<=${#gamblerResultDict[@]}; j++ ))
 	do
 		echo "Day $j ${gamblerResultDict[DAY$j]}"
-	done | sort -k4 -n | awk 'NR==1{print "Unluckiest day :" ($1$2"        "   $4)}'
+	done | sort -k4 -n | awk 'NR==1{print "Un-luckiest day :" ($1$2"        "   $4)}'
 
 	echo "Total Earn : $totalEarn"
 
 	while [ $totalEarn -gt 0 ]
 	do
-		main
+		display
 	done
 
 }
-
-main
+display
