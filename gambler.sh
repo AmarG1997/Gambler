@@ -68,3 +68,10 @@ function main()
 
 main
 	echo "Total Earn : $totalEarn"
+
+	while [ $totalEarn -gt 0 ]
+	do
+		main
+		echo "Total Earn : "$totalEarn
+
+	done
